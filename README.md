@@ -17,7 +17,7 @@ def enviar_mensaje(mensaje, modelo='deepseek-chat'):
 
     data = {
         'model': modelo,
-        'messages': [{'role': 'user','PROMPT_SISTEMA','content': mensaje}]
+        'messages': [{'role': 'user':'PROMPT_SISTEMA':'content': mensaje}]
       
    }
 
