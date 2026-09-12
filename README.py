@@ -1,14 +1,29 @@
-
 import requests
+from gtts import gTTS
+from IPython.display import Audio, display
+import io
 
-API_KEY = "sk-6549f06fb6b941cea7442e5451561a58"
+API_KEY = "sk-22f9df29562b47a1aadb5303be7e34e0"
 API_URL = "https://api.deepseek.com/v1/chat/completions"
 
 PROMPT_SISTEMA = (
-   "eres onbit, un profesor o tutor especializado en cyberseguridad y copias de seguridad. "
-   "tienes que brindar respuesta clara y con un breve ejemplo. "
-   "si te preguntan de algo que no esté relacionado tienes que explicar amablemente que únicamente estás especializado en cyberseguridad y copias de seguridad."
+   "eres onbit, un profesor o tutor altamente especializado y experto en ciberseguridad y copias de seguridad. "
+   "tienes que brindar una respuesta extremadamente clara, detallada, técnica y con un breve ejemplo práctico. "
+   "si te preguntan de algo que no esté relacionado, tienes que explicar amablemente que únicamente estás ultra especializado en ciberseguridad y copias de seguridad."
 )
+
+def speak_text(text, lang='es'):
+    """
+    Convierte texto a voz usando gTTS y lo reproduce en el notebook.
+    """
+    try:
+        tts = gTTS(text=text, lang=lang, slow=False)
+        fp = io.BytesIO()
+        tts.write_to_fp(fp)
+        fp.seek(0)
+        display(Audio(fp.read(), autoplay=True))
+    except Exception as e:
+        print(f"Error al reproducir el audio: {e}")
 
 def enviar_mensaje(mensaje, modelo="deepseek-chat"):
    headers = {
@@ -42,24 +57,29 @@ def enviar_mensaje(mensaje, modelo="deepseek-chat"):
        return f"Error Inesperado: {e}"
 
 def main():
-   print("Bienvenido al chatbot de DeepSeek. Escribe 'salir' para terminar.")
+   welcome_message = "Bienvenido al chatbot de DeepSeek. Escribe 'salir' para terminar."
+   print(welcome_message)
+   speak_text(welcome_message)
 
    test_response = enviar_mensaje("hola")
    if "Error" in test_response:
-       print(f"⚠️ {test_response}")
-       print("Por favor, verifica tu API Key en https://platform.deepseek.com/")
+       error_msg = f"⚠️ {test_response}\nPor favor, verifica tu API Key en https://platform.deepseek.com/"
+       print(error_msg)
+       speak_text("Ha ocurrido un error. Por favor, verifica tu clave API.")
        return
 
    while True:
        mensaje_usuario = input("Tú: ")
 
        if mensaje_usuario.lower() == "salir":
-           print("Chatbot: ¡Hasta Luego!")
+           exit_message = "Chatbot: ¡Hasta Luego!"
+           print(exit_message)
+           speak_text(exit_message)
            break
 
        respuesta = enviar_mensaje(mensaje_usuario)
        print(f"Chatbot: {respuesta}\n")
+       speak_text(respuesta)
 
 if __name__ == "__main__":
    main()
-
